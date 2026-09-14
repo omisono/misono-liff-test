@@ -8,10 +8,16 @@
 <body>
   <h3>LIFFテストページ</h3>
   <div id="result">読み込み中...</div>
+  <div id="checkin_area" style="display:none; margin-top:20px;">
+    <button id="checkin_btn" style="font-size:20px; padding:10px 20px;">来院しました</button>
+    <div id="checkin_status"></div>
+  </div>
 
   <script>
     const LIFF_ID = "2011582186-tOczwbt7";
     const GAS_URL = "https://script.google.com/macros/s/AKfycbyegGawlMgZUxB__fl5Kp38pNjfcOyz0yXAPh_eWm1P-Q_enu72VsMVRy6cIJg4FIix/exec";
+
+    let currentProfile = null;
 
     liff.init({ liffId: LIFF_ID })
       .then(() => {
@@ -23,6 +29,7 @@
       })
       .then((profile) => {
         if (!profile) return;
+        currentProfile = profile;
         document.getElementById('result').innerHTML =
           "ユーザーID: " + profile.userId + "<br>表示名: " + profile.displayName + "<br>送信中...";
 
@@ -37,11 +44,29 @@
         }).then(() => {
           document.getElementById('result').innerHTML =
             "ユーザーID: " + profile.userId + "<br>表示名: " + profile.displayName + "<br>送信完了しました";
+          document.getElementById('checkin_area').style.display = 'block';
         });
       })
       .catch((err) => {
         document.getElementById('result').innerText = "エラー: " + err;
       });
+
+    document.getElementById('checkin_btn').addEventListener('click', function() {
+      if (!currentProfile) return;
+      document.getElementById('checkin_status').innerText = "送信中...";
+      fetch(GAS_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          type: "checkin",
+          userId: currentProfile.userId,
+          displayName: currentProfile.displayName
+        })
+      }).then(() => {
+        document.getElementById('checkin_status').innerText = "受付に連絡しました！";
+      });
+    });
   </script>
 </body>
 </html>
