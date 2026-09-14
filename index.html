@@ -11,6 +11,7 @@
 
   <script>
     const LIFF_ID = "2011582186-tOczwbt7";
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbyegGawlMgZUxB__fl5Kp38pNjfcOyz0yXAPh_eWm1P-Q_enu72VsMVRy6cIJg4FIix/exec";
 
     liff.init({ liffId: LIFF_ID })
       .then(() => {
@@ -23,7 +24,20 @@
       .then((profile) => {
         if (!profile) return;
         document.getElementById('result').innerHTML =
-          "ユーザーID: " + profile.userId + "<br>表示名: " + profile.displayName;
+          "ユーザーID: " + profile.userId + "<br>表示名: " + profile.displayName + "<br>送信中...";
+
+        return fetch(GAS_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            userId: profile.userId,
+            displayName: profile.displayName
+          })
+        }).then(() => {
+          document.getElementById('result').innerHTML =
+            "ユーザーID: " + profile.userId + "<br>表示名: " + profile.displayName + "<br>送信完了しました";
+        });
       })
       .catch((err) => {
         document.getElementById('result').innerText = "エラー: " + err;
