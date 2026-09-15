@@ -6,6 +6,11 @@
   <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 </head>
 <body>
+  <div id="wait_info" style="text-align:center; margin-bottom:20px; padding:12px; background:#f0fdf4; border-radius:8px;">
+    <div id="wait_title" style="font-size:18px; font-weight:bold; color:#166534;">読み込み中...</div>
+    <div id="wait_sub" style="font-size:14px; color:#333; margin-top:4px;"></div>
+  </div>
+
   <h3>LIFFテストページ</h3>
   <div id="result">読み込み中...</div>
   <div id="checkin_area" style="display:none; margin-top:20px;">
@@ -16,8 +21,23 @@
   <script>
     const LIFF_ID = "2011582186-tOczwbt7";
     const GAS_URL = "https://script.google.com/macros/s/AKfycbyegGawlMgZUxB__fl5Kp38pNjfcOyz0yXAPh_eWm1P-Q_enu72VsMVRy6cIJg4FIix/exec";
+    const WAIT_URL = "https://script.google.com/macros/s/AKfycbwXIsGpcMISvTZKBQmVrWWXVNIfJDSODxOm-NF7We19y2JPxEnvESVnMoYO4t1OJ6IDfQ/exec";
 
     let currentProfile = null;
+
+    function loadWaitInfo() {
+      fetch(WAIT_URL + "?api=1")
+        .then(res => res.json())
+        .then(d => {
+          document.getElementById('wait_title').textContent = d.title;
+          document.getElementById('wait_sub').textContent = d.sub;
+        })
+        .catch(() => {
+          document.getElementById('wait_title').textContent = "待ち時間情報を取得できませんでした";
+        });
+    }
+    loadWaitInfo();
+    setInterval(loadWaitInfo, 30000);
 
     liff.init({ liffId: LIFF_ID })
       .then(() => {
