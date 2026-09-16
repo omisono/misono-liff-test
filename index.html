@@ -7,9 +7,13 @@
   <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 </head>
 <body>
-  <div id="wait_info" style="text-align:center; margin-bottom:24px; padding:24px 12px; background:#f0fdf4; border-radius:10px;">
+  <div id="wait_info" style="text-align:center; margin-bottom:12px; padding:24px 12px; background:#f0fdf4; border-radius:10px;">
     <div id="wait_title" style="font-size:36px; font-weight:bold; color:#166534; line-height:1.4;">読み込み中...</div>
     <div id="wait_sub" style="font-size:24px; color:#333; margin-top:14px;"></div>
+  </div>
+
+  <div id="closed_days_info" style="text-align:center; font-size:16px; color:#555; margin-bottom:24px; padding:10px; background:#f5f5f5; border-radius:8px;">
+    定休日：日曜・祝日・月曜　／　水曜は午後休診
   </div>
 
   <h3>LIFFテストページ</h3>
@@ -53,6 +57,13 @@
 
     let currentProfile = null;
     let selectedRegion = null;
+    let waitAccepting = false;
+
+    function updateActionVisibility() {
+      var show = !!currentProfile && waitAccepting;
+      document.getElementById('checkin_area').style.display = show ? 'block' : 'none';
+      document.getElementById('coming_area').style.display = show ? 'block' : 'none';
+    }
 
     function loadWaitInfo() {
       fetch(WAIT_URL + "?api=1")
@@ -60,9 +71,14 @@
         .then(d => {
           document.getElementById('wait_title').textContent = d.title;
           document.getElementById('wait_sub').textContent = d.sub;
+          waitAccepting = !!d.accepting;
+          updateActionVisibility();
         })
         .catch(() => {
           document.getElementById('wait_title').textContent = "待ち時間情報を取得できませんでした";
+          document.getElementById('wait_sub').textContent = "";
+          waitAccepting = false;
+          updateActionVisibility();
         });
     }
     loadWaitInfo();
@@ -93,8 +109,7 @@
         }).then(() => {
           document.getElementById('result').innerHTML =
             "ユーザーID: " + profile.userId + "<br>表示名: " + profile.displayName + "<br>送信完了しました";
-          document.getElementById('checkin_area').style.display = 'block';
-          document.getElementById('coming_area').style.display = 'block';
+          updateActionVisibility();
         });
       })
       .catch((err) => {
