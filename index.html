@@ -63,13 +63,6 @@
       color: #1e3a8a;
       text-decoration: none;
     }
-    .debug {
-      font-size: 12px;
-      color: #6b7280;
-      text-align: center;
-      margin-bottom: 20px;
-      line-height: 1.6;
-    }
     .action-card {
       background: var(--green-card);
       border: 1px solid #dcfce7;
@@ -122,13 +115,6 @@
       <div><a href="tel:0596227481" class="tel-link">📞 0596-22-7481</a></div>
     </div>
 
-    <div class="debug" id="result">読み込み中...</div>
-
-    <div class="action-card" id="checkin_area" style="display:none;">
-      <button id="checkin_btn" class="btn">来院しました</button>
-      <div class="status-text" id="checkin_status"></div>
-    </div>
-
     <div class="action-card" id="coming_area" style="display:none;">
       <div id="coming_step_start">
         <button id="coming_start_btn" class="btn">今から行きます</button>
@@ -167,7 +153,6 @@
 
     function updateActionVisibility() {
       var show = !!currentProfile && waitAccepting;
-      document.getElementById('checkin_area').style.display = show ? 'block' : 'none';
       document.getElementById('coming_area').style.display = show ? 'block' : 'none';
     }
 
@@ -201,8 +186,6 @@
       .then((profile) => {
         if (!profile) return;
         currentProfile = profile;
-        document.getElementById('result').innerHTML =
-          "ユーザーID: " + profile.userId + "<br>表示名: " + profile.displayName + "<br>送信中...";
 
         return fetch(GAS_URL, {
           method: 'POST',
@@ -213,31 +196,12 @@
             displayName: profile.displayName
           })
         }).then(() => {
-          document.getElementById('result').innerHTML =
-            "ユーザーID: " + profile.userId + "<br>表示名: " + profile.displayName + "<br>送信完了しました";
           updateActionVisibility();
         });
       })
       .catch((err) => {
-        document.getElementById('result').innerText = "エラー: " + err;
+        console.error(err);
       });
-
-    document.getElementById('checkin_btn').addEventListener('click', function() {
-      if (!currentProfile) return;
-      document.getElementById('checkin_status').innerText = "送信中...";
-      fetch(GAS_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({
-          type: "checkin",
-          userId: currentProfile.userId,
-          displayName: currentProfile.displayName
-        })
-      }).then(() => {
-        document.getElementById('checkin_status').innerText = "受付に連絡しました！";
-      });
-    });
 
     document.getElementById('coming_start_btn').addEventListener('click', function() {
       document.getElementById('coming_step_start').style.display = 'none';
