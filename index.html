@@ -244,8 +244,15 @@
           eta: eta
         })
       }).then(function() {
-        document.getElementById('coming_status').innerText =
-          "受付にお伝えしました！（" + region + "・" + eta + "）";
+        if (eta === "1時間以上") {
+          document.getElementById('coming_status').innerText =
+            "受付にお伝えしました（" + region + "）。現在1時間以上お待ちいただく見込みです。" +
+            "1時間圏内に近づきましたら、恐れ入りますがこの画面から再度「今から行きます」でご連絡ください。" +
+            "その時点で受付を開始いたします。";
+        } else {
+          document.getElementById('coming_status').innerText =
+            "受付にお伝えしました！（" + region + "・" + eta + "）";
+        }
       });
     }
   </script>
