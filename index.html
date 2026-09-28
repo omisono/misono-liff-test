@@ -128,10 +128,7 @@
         <button class="region_btn btn btn-outline" data-region="県内">県内</button>
         <button class="region_btn btn btn-outline" data-region="県外">県外</button>
       </div>
-      <div id="coming_step_eta" style="display:none;">
-        <div class="step-title">どれくらいで来れますか？</div>
-        <div id="eta_buttons"></div>
-      </div>
+      <div id="coming_step_confirm" style="display:none;"></div>
       <div class="status-text" id="coming_status"></div>
     </div>
   </div>
@@ -141,15 +138,14 @@
     const GAS_URL = "https://script.google.com/macros/s/AKfycbyegGawlMgZUxB__fl5Kp38pNjfcOyz0yXAPh_eWm1P-Q_enu72VsMVRy6cIJg4FIix/exec";
     const WAIT_URL = "https://script.google.com/macros/s/AKfycbwXIsGpcMISvTZKBQmVrWWXVNIfJDSODxOm-NF7We19y2JPxEnvESVnMoYO4t1OJ6IDfQ/exec";
 
-    const ETA_OPTIONS = {
-      "市内": ["15分圏内", "30分圏内", "1時間圏内"],
-      "県内": ["30分圏内", "1時間圏内", "1時間以上"],
-      "県外": ["1時間以上"]
-    };
+    const ARRIVAL_BUFFER_MINUTES = 10; // 到着目安時刻の手前バッファ
+    const MINUTES_PER_WAITING = 8; // 待ち1人あたりの目安分数（サーバー側と統一）
 
     let currentProfile = null;
     let selectedRegion = null;
     let waitAccepting = false;
+    let currentWaitingCount = 0;
+    let currentSessionEndHhmm = null;
 
     function updateActionVisibility() {
       var show = !!currentProfile && waitAccepting;
@@ -163,12 +159,16 @@
           document.getElementById('wait_title').textContent = d.title;
           document.getElementById('wait_sub').textContent = d.sub;
           waitAccepting = !!d.accepting;
+          currentWaitingCount = d.waitingCount || 0;
+          currentSessionEndHhmm = (typeof d.sessionEndHhmm === "number") ? d.sessionEndHhmm : null;
           updateActionVisibility();
         })
         .catch(() => {
           document.getElementById('wait_title').textContent = "待ち時間情報を取得できませんでした";
           document.getElementById('wait_sub').textContent = "";
           waitAccepting = false;
+          currentWaitingCount = 0;
+          currentSessionEndHhmm = null;
           updateActionVisibility();
         });
     }
@@ -208,29 +208,87 @@
       document.getElementById('coming_step_region').style.display = 'block';
     });
 
+    function formatHHMMLabel(date) {
+      var h = date.getHours();
+      var m = date.getMinutes();
+      return h + "時" + (m < 10 ? "0" + m : String(m)) + "分";
+    }
+
+    function toHhmmNumber(date) {
+      return date.getHours() * 100 + date.getMinutes();
+    }
+
     document.querySelectorAll('.region_btn').forEach(function(btn) {
       btn.addEventListener('click', function() {
         selectedRegion = btn.getAttribute('data-region');
         document.getElementById('coming_step_region').style.display = 'none';
-
-        var etaDiv = document.getElementById('eta_buttons');
-        etaDiv.innerHTML = '';
-        ETA_OPTIONS[selectedRegion].forEach(function(eta) {
-          var b = document.createElement('button');
-          b.textContent = eta;
-          b.className = 'btn btn-outline';
-          b.addEventListener('click', function() {
-            sendComing(selectedRegion, eta);
-          });
-          etaDiv.appendChild(b);
-        });
-        document.getElementById('coming_step_eta').style.display = 'block';
+        showConfirmStep(selectedRegion);
       });
     });
 
-    function sendComing(region, eta) {
+    function showConfirmStep(region) {
+      var confirmDiv = document.getElementById('coming_step_confirm');
+      confirmDiv.innerHTML = '';
+
+      if (region === "県外") {
+        var farText = document.createElement('div');
+        farText.className = 'step-title';
+        farText.textContent = "1時間以上かかる見込みとしてお伝えします。1時間圏内に近づきましたら、再度この画面の「今から行きます」からご連絡ください。";
+        confirmDiv.appendChild(farText);
+
+        var farBtn = document.createElement('button');
+        farBtn.textContent = "受付に伝える";
+        farBtn.className = 'btn';
+        farBtn.addEventListener('click', function() {
+          sendComing(region, "1時間以上", false);
+        });
+        confirmDiv.appendChild(farBtn);
+
+        confirmDiv.style.display = 'block';
+        return;
+      }
+
+      // 市内・県内：現在の実際の待ち時間から到着目安時刻を算出して確認する
+      var waitMinutes = currentWaitingCount * MINUTES_PER_WAITING;
+      var targetDate = new Date(Date.now() + (waitMinutes - ARRIVAL_BUFFER_MINUTES) * 60000);
+      var targetLabel = formatHHMMLabel(targetDate);
+      var targetHhmm = toHhmmNumber(targetDate);
+
+      var askText = document.createElement('div');
+      askText.className = 'step-title';
+      askText.textContent = "現在の待ち時間は概ね" + waitMinutes + "分です。" + targetLabel + "頃までにこちらに到着できますか？";
+      confirmDiv.appendChild(askText);
+
+      var yesBtn = document.createElement('button');
+      yesBtn.textContent = "はい";
+      yesBtn.className = 'btn';
+      yesBtn.addEventListener('click', function() {
+        sendComing(region, targetLabel + "到着予定", true);
+      });
+      confirmDiv.appendChild(yesBtn);
+
+      var noBtn = document.createElement('button');
+      noBtn.textContent = "いいえ";
+      noBtn.className = 'btn btn-outline';
+      noBtn.addEventListener('click', function() {
+        confirmDiv.style.display = 'none';
+        var statusEl = document.getElementById('coming_status');
+        if (currentSessionEndHhmm !== null && targetHhmm >= currentSessionEndHhmm) {
+          statusEl.innerText =
+            "本日の受付終了時刻までにお越しいただくのが難しい状況です。恐れ入りますがお電話でご相談ください。📞 0596-22-7481";
+        } else {
+          statusEl.innerText =
+            "承知しました。到着予定の20分前ぐらいになりましたら、再度この画面から「今から行きます」でご連絡ください。";
+        }
+      });
+      confirmDiv.appendChild(noBtn);
+
+      confirmDiv.style.display = 'block';
+    }
+
+    function sendComing(region, eta, confirmed) {
       if (!currentProfile) return;
-      document.getElementById('coming_step_eta').style.display = 'none';
+      document.getElementById('coming_step_confirm').style.display = 'none';
       document.getElementById('coming_status').innerText = "送信中...";
       fetch(GAS_URL, {
         method: 'POST',
@@ -241,7 +299,8 @@
           userId: currentProfile.userId,
           displayName: currentProfile.displayName,
           region: region,
-          eta: eta
+          eta: eta,
+          confirmed: !!confirmed
         })
       }).then(function() {
         if (eta === "1時間以上") {
