@@ -250,20 +250,27 @@
 
       // 市内・県内：現在の実際の待ち時間から到着目安時刻を算出して確認する
       var waitMinutes = currentWaitingCount * MINUTES_PER_WAITING;
-      var targetDate = new Date(Date.now() + (waitMinutes - ARRIVAL_BUFFER_MINUTES) * 60000);
+      var bufferedMinutes = Math.max(waitMinutes - ARRIVAL_BUFFER_MINUTES, 0);
+      var targetDate = new Date(Date.now() + bufferedMinutes * 60000);
       var targetLabel = formatHHMMLabel(targetDate);
       var targetHhmm = toHhmmNumber(targetDate);
+      var noWait = (bufferedMinutes <= 0);
 
       var askText = document.createElement('div');
       askText.className = 'step-title';
-      askText.textContent = "現在の待ち時間は概ね" + waitMinutes + "分です。" + targetLabel + "頃までにこちらに到着できますか？";
+      if (noWait) {
+        askText.textContent = "現在ほとんど待ち時間がありません。今すぐこちらにお越しいただけますか？";
+      } else {
+        askText.textContent = "現在の待ち時間は概ね" + waitMinutes + "分です。" + targetLabel + "頃までにこちらに到着できますか？";
+      }
       confirmDiv.appendChild(askText);
 
       var yesBtn = document.createElement('button');
       yesBtn.textContent = "はい";
       yesBtn.className = 'btn';
       yesBtn.addEventListener('click', function() {
-        sendComing(region, targetLabel + "到着予定", true);
+        var etaLabel = noWait ? "今すぐ来院" : (targetLabel + "到着予定");
+        sendComing(region, etaLabel, true);
       });
       confirmDiv.appendChild(yesBtn);
 
