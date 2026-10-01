@@ -187,6 +187,7 @@
 
     const ARRIVAL_BUFFER_MINUTES = 10; // 到着目安時刻の手前バッファ
     const MINUTES_PER_WAITING = 8; // 待ち1人あたりの目安分数（サーバー側と統一）
+    const CLOSING_SOON_MINUTES = 10; // 診療終了のこの分数前になったら「今から行きます」を締める
 
     let currentProfile = null;
     let selectedRegion = null;
@@ -199,15 +200,39 @@
       document.getElementById('coming_area').style.display = show ? 'block' : 'none';
     }
 
+    function hhmmToMinutes(hhmm) {
+      return Math.floor(hhmm / 100) * 60 + (hhmm % 100);
+    }
+
+    // 診療終了時刻まであと何分か（マイナスなら終了済み、nullなら不明）
+    function minutesUntilClose(sessionEndHhmm) {
+      if (sessionEndHhmm === null || typeof sessionEndHhmm !== "number") return null;
+      var now = new Date();
+      var nowMinutes = now.getHours() * 60 + now.getMinutes();
+      return hhmmToMinutes(sessionEndHhmm) - nowMinutes;
+    }
+
     function loadWaitInfo() {
       fetch(WAIT_URL + "?api=1")
         .then(res => res.json())
         .then(d => {
-          document.getElementById('wait_title').textContent = d.title;
-          document.getElementById('wait_sub').textContent = d.sub;
-          waitAccepting = !!d.accepting;
           currentWaitingCount = d.waitingCount || 0;
           currentSessionEndHhmm = (typeof d.sessionEndHhmm === "number") ? d.sessionEndHhmm : null;
+
+          var remain = minutesUntilClose(currentSessionEndHhmm);
+          var closingSoon = (remain !== null) && remain > 0 && remain <= CLOSING_SOON_MINUTES;
+
+          if (closingSoon) {
+            // 終了間際に「今すぐ来院できますか」と促すのはおかしいので、
+            // 専用の表示にして「今から行きます」は受け付けない
+            document.getElementById('wait_title').textContent = "本日の診療時間の終了" + CLOSING_SOON_MINUTES + "分前です";
+            document.getElementById('wait_sub').textContent = "";
+            waitAccepting = false;
+          } else {
+            document.getElementById('wait_title').textContent = d.title;
+            document.getElementById('wait_sub').textContent = d.sub;
+            waitAccepting = !!d.accepting;
+          }
           updateActionVisibility();
         })
         .catch(() => {
