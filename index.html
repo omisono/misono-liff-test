@@ -157,10 +157,9 @@
         </div>
       </div>
       <div id="coming_step_region" style="display:none;">
-        <div class="step-title">今どちらにいますか？</div>
-        <button class="region_btn btn btn-outline" data-region="市内">市内</button>
-        <button class="region_btn btn btn-outline" data-region="県内">県内</button>
-        <button class="region_btn btn btn-outline" data-region="県外">県外</button>
+        <div class="step-title">30分以内に来院できますか？</div>
+        <button id="within30_yes" class="btn">30分以内に来院できる</button>
+        <button id="within30_no" class="btn btn-outline">できない</button>
       </div>
       <div id="coming_step_confirm" style="display:none;"></div>
       <div class="status-text" id="coming_status"></div>
@@ -320,37 +319,24 @@
       return date.getHours() * 100 + date.getMinutes();
     }
 
-    document.querySelectorAll('.region_btn').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        selectedRegion = btn.getAttribute('data-region');
-        document.getElementById('coming_step_region').style.display = 'none';
-        showConfirmStep(selectedRegion);
-      });
+    document.getElementById('within30_yes').addEventListener('click', function() {
+      selectedRegion = "30分圏内";
+      document.getElementById('coming_step_region').style.display = 'none';
+      showConfirmStep(selectedRegion);
+    });
+
+    document.getElementById('within30_no').addEventListener('click', function() {
+      document.getElementById('coming_step_region').style.display = 'none';
+      document.getElementById('coming_step_start').style.display = 'block';
+      document.getElementById('coming_status').innerText =
+        "承知しました。30分圏内になりましたら、もう一度この画面の「今から行きます」からご連絡ください。";
     });
 
     function showConfirmStep(region) {
       var confirmDiv = document.getElementById('coming_step_confirm');
       confirmDiv.innerHTML = '';
 
-      if (region === "県外") {
-        var farText = document.createElement('div');
-        farText.className = 'step-title';
-        farText.textContent = "1時間以上かかる見込みとしてお伝えします。1時間圏内に近づきましたら、再度この画面の「今から行きます」からご連絡ください。";
-        confirmDiv.appendChild(farText);
-
-        var farBtn = document.createElement('button');
-        farBtn.textContent = "受付に伝える";
-        farBtn.className = 'btn';
-        farBtn.addEventListener('click', function() {
-          sendComing(region, "1時間以上", false);
-        });
-        confirmDiv.appendChild(farBtn);
-
-        confirmDiv.style.display = 'block';
-        return;
-      }
-
-      // 市内・県内：現在の実際の待ち時間から到着目安時刻を算出して確認する
+      // 30分圏内：現在の実際の待ち時間から到着目安時刻を算出して確認する
       var waitMinutes = currentWaitingCount * MINUTES_PER_WAITING;
       var bufferedMinutes = Math.max(waitMinutes - ARRIVAL_BUFFER_MINUTES, 0);
       var targetDate = new Date(Date.now() + bufferedMinutes * 60000);
