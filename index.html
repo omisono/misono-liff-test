@@ -4,6 +4,10 @@
   <title>御薗治療院</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+    // 読み込み直しの時に、一瞬メニューが見えないよう、最初から表示する画面を決めておく
+    if (location.hash === '#wait') { document.documentElement.className = 'start-wait'; }
+  </script>
   <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <style>
     :root {
@@ -157,6 +161,8 @@
     .foot { text-align:center; font-size:12px; color:#6b7280; margin-top:18px; line-height:1.6; }
 
     .view { display:none; }
+    .start-wait #view-menu { display:none !important; }
+    .start-wait #view-wait { display:block !important; }
   </style>
 </head>
 <body>
@@ -179,7 +185,7 @@
     </a>
 
     <!-- セルフケア（運動の解説） -->
-    <a class="item" href="#selfcare">
+    <a class="item" href="selfcare.html">
       <span class="ico">🧘</span>
       <span class="txt"><b>セルフケア（運動の解説）</b><small>手・足など、ご自宅でできる運動を動画で紹介します</small></span>
       <span class="arrow">›</span>
@@ -215,43 +221,6 @@
     </a>
 
     <div class="foot">御薗治療院</div>
-    </div>
-
-    <div class="view" id="view-selfcare">
-    <a class="back-link" href="#menu">← メニューへ戻る</a>
-    <div class="clinic-header">
-      <div class="name">🌿 御薗治療院</div>
-    </div>
-    <h1 class="page-title">セルフケア（運動の解説）</h1>
-    <p class="lead">
-      動画を見ながらできる簡単な運動を、部位別にご紹介していきます。<br>
-      順次追加しますので、しばらくお待ちください。
-    </p>
-
-    <div class="notice">現在準備中です。「工事中」の項目は、動画ができ次第ご覧いただけます。</div>
-
-    <div class="item wip">
-      <span class="ico">🤲</span>
-      <span class="txt"><b>手の運動</b><small>手・指をほぐす、かんたんな運動</small></span>
-      <span class="badge">工事中</span>
-    </div>
-    <div class="item wip">
-      <span class="ico">🦶</span>
-      <span class="txt"><b>足の運動</b><small>足首・足指を動かす、かんたんな運動</small></span>
-      <span class="badge">工事中</span>
-    </div>
-    <div class="item wip">
-      <span class="ico">🙆</span>
-      <span class="txt"><b>首・肩の運動</b><small>首や肩のこわばりをやわらげる運動</small></span>
-      <span class="badge">工事中</span>
-    </div>
-    <div class="item wip">
-      <span class="ico">🧍</span>
-      <span class="txt"><b>腰・背中の運動</b><small>腰や背中を無理なく動かす運動</small></span>
-      <span class="badge">工事中</span>
-    </div>
-
-    <p class="foot">※ 痛みが強いときや、不安があるときは、無理をせずご相談ください。</p>
     </div>
 
     <div class="view" id="view-wait">
@@ -307,6 +276,7 @@
       </div>
       <input id="name_input_field" class="modal-input" type="text" placeholder="例：御薗太郎">
       <button id="name_input_submit" class="btn" style="width:100%; margin:0;">送信</button>
+      <button id="name_input_cancel" class="btn btn-outline" style="width:100%; margin:10px 0 0; font-size:16px; padding:10px 14px;">あとで（メニューに戻る）</button>
     </div>
   </div>
 
@@ -407,10 +377,15 @@
       });
     }
 
+    var pendingProfile = null;
+    var nameHandlersBound = false;
     function askSelfName(profile) {
+      pendingProfile = profile;
       var modal = document.getElementById('name_input_modal');
       modal.style.display = 'flex';
-      document.getElementById('name_input_submit').addEventListener('click', function onSubmit() {
+      if (nameHandlersBound) return;
+      nameHandlersBound = true;
+      document.getElementById('name_input_submit').addEventListener('click', function() {
         var val = document.getElementById('name_input_field').value.trim();
         if (!val) {
           alert('お名前を入力してください');
@@ -418,8 +393,14 @@
         }
         saveSelfReportedName(val);
         modal.style.display = 'none';
-        sendProfile(profile, val);
-      }, { once: true });
+        sendProfile(pendingProfile, val);
+      });
+      // 名前を入力せずにメニューへ戻る（次に待ち時間システムを開いた時に、もう一度お聞きします）
+      document.getElementById('name_input_cancel').addEventListener('click', function() {
+        modal.style.display = 'none';
+        profileFlowStarted = false;
+        location.hash = '#menu';
+      });
     }
 
     // LIFFの初期化は起動時に1回だけ。ログインや名前の確認は「待ち時間システム」を開いた時に行う
@@ -459,10 +440,11 @@
 
     // ---- 画面（メニュー／セルフケア／待ち時間）の切り替え：ページ移動はせず、表示を切り替える ----
     function showView(name) {
-      ['menu', 'selfcare', 'wait'].forEach(function(v) {
+      ['menu', 'wait'].forEach(function(v) {
         document.getElementById('view-' + v).style.display = (v === name) ? 'block' : 'none';
       });
       currentView = name;
+      document.documentElement.className = '';
       window.scrollTo(0, 0);
       if (name === 'wait') {
         startWait();
@@ -471,7 +453,7 @@
     }
     function routeFromHash() {
       var h = (location.hash || '').replace('#', '');
-      showView((h === 'wait' || h === 'selfcare') ? h : 'menu');
+      showView(h === 'wait' ? 'wait' : 'menu');
     }
     window.addEventListener('hashchange', routeFromHash);
 
