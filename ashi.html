@@ -23,6 +23,21 @@
     .sub { font-size:16.5px; color:var(--green-dark); margin:20px 0 0; padding-left:10px; border-left:5px solid var(--green); line-height:1.5; }
     .photo { display:block; width:100%; height:auto; border-radius:12px; border:1px solid #e5e7eb; margin-top:10px; }
     .photo.narrow { width:62%; margin-left:auto; margin-right:auto; }
+    fieldset { border:0; padding:0; margin:18px 0 0; min-width:0; }
+    legend { font-size:16.5px; font-weight:bold; color:var(--green-dark); line-height:1.5; padding:0; margin-bottom:6px; }
+    .req { display:inline-block; margin-left:8px; font-size:11px; font-weight:bold; color:#fff; background:#dc2626; border-radius:999px; padding:2px 8px; vertical-align:middle; }
+    .hint { font-size:13.5px !important; color:#6b7280; margin:0 0 6px !important; line-height:1.7 !important; }
+    .opt { display:flex; align-items:flex-start; gap:10px; background:#f9fafb; border:2px solid #e5e7eb; border-radius:12px; padding:12px; margin-top:8px; font-size:15.5px; line-height:1.6; cursor:pointer; }
+    .opt input { flex:none; width:22px; height:22px; margin:1px 0 0; accent-color:var(--green); }
+    .opt:has(input:checked) { background:var(--green-bg); border-color:var(--green); }
+    .txt { display:block; width:100%; font-size:16px; line-height:1.6; padding:12px; border:2px solid #d1d5db; border-radius:12px; margin-top:8px; font-family:inherit; }
+    .txt:focus { outline:none; border-color:var(--green); }
+    .err { background:#fee2e2; color:#991b1b; font-weight:bold; font-size:14.5px; line-height:1.7; border-radius:12px; padding:12px 14px; margin-top:14px; }
+    button.go { width:100%; border:0; font-family:inherit; cursor:pointer; }
+    button.go:disabled { background:#9ca3af; box-shadow:none; }
+    .done { text-align:center; padding:18px 6px 6px; }
+    .done-ico { font-size:44px; }
+    .done b { display:block; font-size:19px; color:var(--green-dark); margin-top:6px; }
     .video { position:relative; width:100%; padding-top:56.25%; border-radius:12px; overflow:hidden; background:#000; }
     .video iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
     .yt-link { display:block; text-align:center; margin-top:10px; font-size:14px; color:var(--green-dark); font-weight:bold; text-decoration:none; }
@@ -67,14 +82,136 @@
       <div class="caution">痛みが強いときや、不安があるときは、無理をせず中止してご相談ください。</div>
     </section>
 
-    <section class="card">
+    <section class="card" id="survey_card">
       <div class="step"><span class="no">3</span><h2>気づいたことを教えてください</h2></div>
-      <p>基本姿勢をとったときに、身体のどこに力が入ったかを、アンケートでお知らせください。1〜2分で終わります。</p>
-      <a class="go" href="https://docs.google.com/forms/d/e/1FAIpQLScxn8zJv-JQp8Yfn8nTxyK9YfHtMJ9K58W80kEvApcxzRLbxA/viewform">アンケートに答える ›</a>
-      <p class="small">お名前などの個人情報は入力しません。<br>いただいた回答は、今後の運動の解説づくりに役立てます。</p>
+      <div id="survey_form_area">
+      <p>基本姿勢をとったときの、今の身体の様子を教えてください。できる・できないの採点ではありません。1〜2分で終わります。</p>
+      <form id="survey" novalidate autocomplete="off">
+        <fieldset>
+          <legend>Q1. 基本姿勢をとったとき、何が起こりましたか？<span class="req">必須</span></legend>
+          <p class="hint">足首を動かす前の状態について、当てはまるものをすべて選んでください。</p>
+        <label class="opt"><input type="checkbox" name="q1" value="足首に力が入っている"><span>足首に力が入っている</span></label>
+        <label class="opt"><input type="checkbox" name="q1" value="足の裏の内側が、どうしても浮いてしまう"><span>足の裏の内側が、どうしても浮いてしまう</span></label>
+        <label class="opt"><input type="checkbox" name="q1" value="膝頭が真正面を向かない"><span>膝頭が真正面を向かない</span></label>
+        <label class="opt"><input type="checkbox" name="q1" value="股関節のあたりや大腿部（太もも）に力が入ってしまう"><span>股関節のあたりや大腿部（太もも）に力が入ってしまう</span></label>
+        <label class="opt"><input type="checkbox" name="q1" value="身体が横や後ろに倒れてしまう"><span>身体が横や後ろに倒れてしまう</span></label>
+        <label class="opt"><input type="checkbox" name="q1" value="肩に力が入ってしまう"><span>肩に力が入ってしまう</span></label>
+        <label class="opt"><input type="checkbox" name="q1" value="手が身体から離れてしまう"><span>手が身体から離れてしまう</span></label>
+        <label class="opt"><input type="checkbox" name="q1" value="手を握ってしまう"><span>手を握ってしまう</span></label>
+        <label class="opt"><input type="checkbox" id="q1_other_cb" name="q1" value="その他"><span>その他</span></label>
+        <input type="text" id="q1_other" class="txt" maxlength="150" placeholder="その他の内容をお書きください" style="display:none">
+        <label class="opt"><input type="checkbox" name="q1" value="上記のどれも当てはまらない" data-x="1"><span>上記のどれも当てはまらない</span></label>
+        <label class="opt"><input type="checkbox" name="q1" value="自分ではよくわからない" data-x="1"><span>自分ではよくわからない</span></label>
+        </fieldset>
+        <fieldset>
+          <legend>Q2. 余分な力を抜こうとしてみてください。どうなりましたか？<span class="req">必須</span></legend>
+        <label class="opt"><input type="radio" name="q2" value="力が抜けたと感じる"><span>力が抜けたと感じる</span></label>
+        <label class="opt"><input type="radio" name="q2" value="一部は抜けたが、残っているところがある"><span>一部は抜けたが、残っているところがある</span></label>
+        <label class="opt"><input type="radio" name="q2" value="抜こうとしても、抜けた感じがしない"><span>抜こうとしても、抜けた感じがしない</span></label>
+        <label class="opt"><input type="radio" name="q2" value="抜けたかどうかはよくわからないが、まだ力が入っていることは感じる"><span>抜けたかどうかはよくわからないが、まだ力が入っていることは感じる</span></label>
+        <label class="opt"><input type="radio" name="q2" value="自分ではよくわからない"><span>自分ではよくわからない</span></label>
+        </fieldset>
+        <fieldset>
+          <legend>Q3. 気づいたことがあれば教えてください</legend>
+          <p class="hint">左右の違いや、違和感のある場所など、自由にお書きください。</p>
+          <textarea id="q3" class="txt" rows="4" maxlength="800"></textarea>
+        </fieldset>
+        <input type="text" id="hp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0;height:0;width:0">
+        <div id="sv_err" class="err" style="display:none"></div>
+        <button type="submit" id="sv_btn" class="go">送信する</button>
+        <p class="small">お名前などの個人情報は入力しません。<br>いただいた回答は、今後の運動の解説づくりに役立てます。</p>
+      </form>
+      </div>
+      <div id="survey_done" style="display:none">
+        <div class="done">
+          <div class="done-ico">✅</div>
+          <b>ご回答ありがとうございました</b>
+          <p>ご協力に感謝いたします。次回の来院時に、感想をお聞かせください。</p>
+        </div>
+      </div>
     </section>
 
     <div class="foot">御薗治療院</div>
   </div>
+  <script>
+    (function(){
+      var SURVEY_URL = "https://script.google.com/macros/s/AKfycbx1ErzP6DyObLPbs3DmgSwWgBwsRCy421mgfGGmPRNyWSY_SLGKtzx2GJJUIRFF7OyS/exec";
+      var SURVEY_KEY = "nbr-ashi-2026";
+      var form = document.getElementById('survey');
+      var btn = document.getElementById('sv_btn');
+      var err = document.getElementById('sv_err');
+      var otherCb = document.getElementById('q1_other_cb');
+      var otherTxt = document.getElementById('q1_other');
+      var q1 = Array.prototype.slice.call(form.querySelectorAll('input[name=q1]'));
+      var submissionId = String(Date.now()) + '-' + Math.random().toString(36).slice(2, 10);
+
+      function showErr(msg){ err.textContent = msg; err.style.display = 'block'; err.scrollIntoView({behavior:'smooth', block:'center'}); }
+      function clearErr(){ err.style.display = 'none'; }
+
+      // 「どれも当てはまらない」「よくわからない」は他の選択と同時に選べない
+      q1.forEach(function(cb){
+        cb.addEventListener('change', function(){
+          if (cb.checked) {
+            if (cb.getAttribute('data-x')) {
+              q1.forEach(function(o){ if (o !== cb) o.checked = false; });
+            } else {
+              q1.forEach(function(o){ if (o.getAttribute('data-x')) o.checked = false; });
+            }
+          }
+          otherTxt.style.display = otherCb.checked ? 'block' : 'none';
+          if (otherCb.checked) otherTxt.focus();
+          clearErr();
+        });
+      });
+      form.addEventListener('change', clearErr);
+
+      function done(){
+        document.getElementById('survey_form_area').style.display = 'none';
+        document.getElementById('survey_done').style.display = 'block';
+        document.getElementById('survey_card').scrollIntoView({behavior:'smooth', block:'start'});
+      }
+
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        clearErr();
+        var picked = q1.filter(function(o){ return o.checked; }).map(function(o){ return o.value; });
+        var r = form.querySelector('input[name=q2]:checked');
+        if (!picked.length) { showErr('Q1：当てはまるものを1つ以上選んでください。'); return; }
+        if (!r) { showErr('Q2：どれか1つを選んでください。'); return; }
+        var payload = {
+          key: SURVEY_KEY,
+          id: submissionId,
+          hp: document.getElementById('hp').value,
+          q1: picked,
+          other: otherCb.checked ? otherTxt.value.trim() : '',
+          q2: r.value,
+          q3: document.getElementById('q3').value.trim()
+        };
+        btn.disabled = true; btn.textContent = '送信中…';
+        var body = JSON.stringify(payload);
+        // text/plain にして、ブラウザの事前確認（プリフライト）を避ける
+        fetch(SURVEY_URL, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: body })
+          .then(function(res){ return res.json(); })
+          .then(function(j){
+            if (j && j.ok) { done(); return; }
+            var e2 = new Error('server'); e2.server = true; throw e2;
+          })
+          .catch(function(e){
+            if (e && e.server) {
+              btn.disabled = false; btn.textContent = '送信する';
+              showErr('送信できませんでした。しばらくしてから、もう一度お試しください。');
+              return;
+            }
+            // 応答が読めなかった場合も、回答IDで二重登録されないので一度だけ再送する
+            return fetch(SURVEY_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: body })
+              .then(function(){ done(); })
+              .catch(function(){
+                btn.disabled = false; btn.textContent = '送信する';
+                showErr('送信できませんでした。電波の良いところで、もう一度お試しください。');
+              });
+          });
+      });
+    })();
+  </script>
 </body>
 </html>
