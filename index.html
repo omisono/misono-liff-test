@@ -6,7 +6,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script>
     // 読み込み直しの時に、一瞬メニューが見えないよう、最初から表示する画面を決めておく
-    if (location.hash === '#wait') { document.documentElement.className = 'start-wait'; }
+    // リッチメニューからの直接リンク（?go=wait / ?go=selfcare）にも対応
+    (function () {
+      var raw = location.search + location.hash, s = raw;
+      try { s = decodeURIComponent(raw); } catch (e) {}
+      if (!location.hash) {
+        if (/go=selfcare/.test(s)) { location.replace('selfcare.html'); return; }
+        if (/go=wait/.test(s)) { location.hash = '#wait'; }
+      }
+      if (location.hash === '#wait') { document.documentElement.className = 'start-wait'; }
+    })();
   </script>
   <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <style>
@@ -159,6 +168,12 @@
     .hours .closed { color:#b91c1c; font-weight:bold; }
     .item.tel .txt b { font-size:20px; }
     .foot { text-align:center; font-size:12px; color:#6b7280; margin-top:18px; line-height:1.6; }
+    .sec-label { font-size:14px; font-weight:bold; color:#166534; margin:22px 4px 8px; display:flex; align-items:center; gap:8px; }
+    .sec-label::after { content:""; flex:1; height:2px; background:#bbf7d0; border-radius:2px; }
+    .item.accent { background:#fffbeb; border-color:#fcd34d; box-shadow:0 4px 12px rgba(180,83,9,0.12); padding:20px 14px; }
+    .item.accent .txt b { font-size:20px; color:#92400e; }
+    .item.accent .txt small { color:#78350f; }
+    .item.accent .arrow { color:#d97706; }
 
     .view { display:none; }
     .start-wait #view-menu { display:none !important; }
@@ -172,11 +187,6 @@
       <div class="name">🌿 御薗治療院</div>
     </div>
 
-    <div class="notice">
-      現在テスト運用中です。メニューは順次増やしていきます。<br>
-      「工事中」の項目は、準備ができ次第ご利用いただけます。
-    </div>
-
     <!-- 待ち時間システム -->
     <a class="item primary" href="#wait">
       <span class="ico">⏱</span>
@@ -184,12 +194,16 @@
       <span class="arrow">›</span>
     </a>
 
+    <div class="sec-label">ご自宅でのケア</div>
+
     <!-- セルフケア（運動の解説） -->
-    <a class="item" href="selfcare.html">
+    <a class="item accent" href="selfcare.html">
       <span class="ico">🧘</span>
-      <span class="txt"><b>セルフケア（運動の解説）</b><small>手・足など、ご自宅でできる運動を動画で紹介します</small></span>
+      <span class="txt"><b>セルフケア（運動動画）</b><small>手・足など、ご自宅でできる運動を動画で紹介します</small></span>
       <span class="arrow">›</span>
     </a>
+
+    <div class="sec-label">からだと健康の考え方</div>
 
     <!-- 健康とは？ -->
     <a class="item" href="kenko.html">
@@ -211,6 +225,8 @@
       <span class="txt"><b>当院の理念</b><small>身体を理解し、身体の自由を取り戻すために</small></span>
       <span class="arrow">›</span>
     </a>
+
+    <div class="sec-label">当院のご案内</div>
 
     <!-- 当院の治療のご案内（工事中） -->
     <div class="item wip">
@@ -269,11 +285,6 @@
       </div>
       <div id="coming_step_confirm" style="display:none;"></div>
       <div class="status-text" id="coming_status"></div>
-    </div>
-
-    <div class="closed-days" id="test_notice_info">
-      現在テスト運用中です。待ち時間の目安としてお試しください。<br>
-      繰り返しテストを行い、問題がなければ本格的に導入する予定です。
     </div>
 
     <div class="closed-days" id="closed_days_info">
