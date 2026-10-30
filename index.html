@@ -105,6 +105,7 @@
     }
     .hint { font-size: 13px; font-weight: bold; color: var(--gray-text); margin-top: 10px; }
     .status-text { font-size: 18px; font-weight: bold; color: var(--green-dark); margin-top: 10px; }
+    .always-note { background:#fff7ed; border:2px solid #fdba74; color:#9a3412; border-radius:14px; padding:12px 14px; margin:0 0 14px; font-size:14.5px; font-weight:bold; line-height:1.8; text-align:center; }
     .party-note { font-size: 14px; line-height: 1.7; color: #374151; margin: 0 0 12px; font-weight: bold; }
     .party-row { display: flex; gap: 8px; margin-bottom: 14px; }
     .party-btn { flex: 1; font-family: inherit; font-size: 20px; font-weight: bold; padding: 16px 0; border-radius: 14px; border: 2px solid #bbf7d0; background: #fff; color: var(--green-dark); cursor: pointer; }
@@ -275,11 +276,17 @@
       <div class="wait-sub" id="wait_sub"></div>
     </div>
 
+    <div class="always-note">
+      あくまでも予約ではないため、<br>診療の時間はズレることがあります。<br>ご了承ください。
+    </div>
+
     <div class="action-card" id="coming_area" style="display:none;">
       <div id="coming_step_start">
         <button id="coming_start_btn" class="btn">今から行きます</button>
-        <div class="hint">
-          順番待ちシステムのため、多少の時間のズレはご了承ください。混雑時にはご要望に添えないこともございます。
+        <div class="hint" style="line-height:1.8;">
+          ・院内へは、診療開始の15分前からお入りいただけます。<br>
+          ・LINEの受付は順番の目安です。先に来院されて院内でお待ちの方を優先することがあるため、順番が前後する場合があります。<br>
+          ・診療開始直後（9時・15時ごろ）は、特に混み合います。
         </div>
       </div>
       <div id="coming_step_region" style="display:none;">
