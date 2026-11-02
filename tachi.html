@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>立位での基本姿勢｜御薗治療院</title>
+  <style>
+    :root { --green-dark:#14532d; --green:#16a34a; --green-bg:#eafbf1; --gray-text:#1f2937; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;
+      background:linear-gradient(180deg,#eafbf1 0%,#ffffff 260px); color:var(--gray-text); padding:20px 16px 56px; }
+    .container { max-width:480px; margin:0 auto; }
+    .back-link { display:inline-block; font-size:15px; font-weight:bold; color:var(--green-dark); text-decoration:none; margin-bottom:8px; padding:6px 4px; }
+    .clinic-header { text-align:center; margin-bottom:6px; }
+    .clinic-header .name { font-size:21px; font-weight:bold; color:var(--green-dark); }
+    h1 { text-align:center; font-size:26px; line-height:1.4; color:var(--green-dark); margin:12px 0 4px; }
+    .subtitle { text-align:center; font-size:15px; line-height:1.7; color:#374151; margin:0 0 16px; font-weight:bold; }
+    .prereq { background:#fff7ed; border:2px solid #fdba74; border-radius:18px; padding:16px; margin-bottom:18px; }
+    .prereq b { display:block; font-size:17px; color:#9a3412; margin-bottom:6px; }
+    .prereq p { margin:0; font-size:15.5px; line-height:1.9; color:#7c2d12; }
+    .go { display:block; background:var(--green); color:#fff; text-align:center; text-decoration:none; font-weight:bold; font-size:17px; padding:16px 12px; border-radius:16px; margin-top:12px; box-shadow:0 6px 16px rgba(22,163,74,0.35); }
+    .card { background:#fff; border-radius:22px; box-shadow:0 6px 18px rgba(22,101,52,0.10); padding:16px 16px 20px; margin-bottom:18px; }
+    .card h2 { margin:0 0 4px; font-size:18px; line-height:1.45; color:var(--green-dark); }
+    .card .cap { font-size:14px; color:#6b7280; margin:0 0 10px; line-height:1.7; }
+    .video { position:relative; width:100%; padding-top:56.25%; border-radius:12px; overflow:hidden; background:#000; }
+    .video iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
+    .video.tall { width:68%; max-width:290px; margin:0 auto; padding-top:0; aspect-ratio:9/16; }
+    .yt-link { display:block; text-align:center; margin-top:10px; font-size:14px; color:var(--green-dark); font-weight:bold; text-decoration:none; }
+    .caution { background:#fef3c7; color:#92400e; border-radius:12px; padding:12px 14px; font-size:14.5px; line-height:1.8; font-weight:bold; }
+    .foot { text-align:center; font-size:13px; color:#6b7280; margin-top:22px; }
+  
+    .ease { background:#fff7ed; border:2px solid #fdba74; border-radius:18px; padding:16px; margin-bottom:18px; text-align:center; }
+    .ease b { display:block; font-size:21px; line-height:1.5; color:#9a3412; }
+    .ease p { margin:8px 0 0; font-size:15.5px; line-height:1.9; color:#7c2d12; }
+    .card h2 .n { color:#fff; background:var(--green); border-radius:999px; display:inline-block; min-width:28px; height:28px; line-height:28px; text-align:center; font-size:16px; margin-right:8px; }
+    .pt { padding:14px 16px 16px; }
+    .pt h2 { margin:0 0 6px; }
+    .pt p { margin:6px 2px 0; font-size:16.5px; line-height:1.9; }
+    .pt .fix { background:var(--green-bg); border-radius:12px; padding:10px 12px; margin-top:8px; font-size:15.5px; line-height:1.8; color:var(--green-dark); font-weight:bold; }
+    .pt .fix span { color:#6b7280; font-weight:normal; display:block; font-size:14px; }
+    .how { background:#fff; border-radius:22px; box-shadow:0 6px 18px rgba(22,101,52,0.10); padding:16px; margin-bottom:18px; }
+    .how h2 { margin:0 0 10px; font-size:18px; color:var(--green-dark); }
+    .nums { display:flex; gap:8px; margin:6px 0 12px; }
+    .nums div { flex:1; text-align:center; background:var(--green-bg); border:2px solid #bbf7d0; border-radius:14px; padding:12px 4px; color:var(--green-dark); font-weight:bold; font-size:13.5px; line-height:1.5; }
+    .nums div big { display:block; font-size:26px; line-height:1.2; }
+    .how p { margin:8px 2px 0; font-size:16.5px; line-height:1.9; }
+    p.key { background:var(--green-bg); border-radius:12px; padding:14px; font-size:17px; line-height:1.9; color:var(--green-dark); font-weight:bold; margin:12px 0 0; }
+    .goal { background:linear-gradient(180deg,#f0fdf4,#fff); border:2px solid #86efac; border-radius:18px; padding:16px; margin-bottom:18px; font-size:16.5px; line-height:1.9; }
+    .goal b { color:var(--green-dark); font-size:18px; }
+    .rel { display:flex; align-items:center; gap:12px; background:#fff; border:2px solid #bbf7d0; border-radius:16px; padding:14px; margin-bottom:18px; text-decoration:none; color:#1f2937; }
+    .rel b { display:block; font-size:16px; color:var(--green-dark); }
+    .rel small { display:block; font-size:13px; color:#4b5563; margin-top:2px; }
+    .rel .ar { margin-left:auto; font-size:24px; color:var(--green); }
+</style>
+</head>
+<body>
+  <div class="container">
+    <a class="back-link" href="selfcare.html">← セルフケアへ戻る</a>
+    <div class="clinic-header"><div class="name">🌿 御薗治療院</div></div>
+    <h1>立位での基本姿勢</h1>
+    <p class="subtitle">立つ姿勢を、整えてみましょう</p>
+
+    <div class="ease">
+      <b>できなくて、大丈夫です。<br>頑張らなくて、良いのです。</b>
+      <p>うまくできなくても、気にしなくて構いません。<br>「こうなるといいな」と思いながら、軽く試してみてください。</p>
+    </div>
+
+    <section class="card">
+      <h2>解説動画</h2>
+      <p class="cap">動画では「解剖学的肢位」として説明しています。立つときの基本姿勢です。</p>
+      <div class="video">
+        <iframe src="https://www.youtube.com/embed/lpa_mN1TGnQ?rel=0&playsinline=1" title="立位での基本姿勢" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <a class="yt-link" href="https://www.youtube.com/watch?v=lpa_mN1TGnQ">動画が表示されないときは、YouTube で開く ›</a>
+    </section>
+
+    <h2 style="font-size:19px;color:var(--green-dark);margin:6px 2px 10px">姿勢のポイント</h2>
+    <section class="card pt">
+      <h2><span class="n">1</span>足幅は、骨盤の幅</h2>
+      <p>足を、骨盤の幅に開いて立ちます。</p>
+    </section>
+    <section class="card pt">
+      <h2><span class="n">2</span>膝頭は、真正面</h2>
+      <p>膝頭（ひざのお皿）を、まっすぐ前に向けます。</p>
+      <div class="fix"><span>ほとんどの方は、膝が内側を向いてしまいます。</span>→ 膝頭を、少し外へ捻ります。</div>
+    </section>
+    <section class="card pt">
+      <h2><span class="n">3</span>つま先も、真正面</h2>
+      <p>つま先を、まっすぐ前に向けます。</p>
+      <div class="fix"><span>外側に開いてしまいやすい部分です。</span>→ つま先を、少し内側へ向けます。</div>
+    </section>
+    <section class="card pt">
+      <h2><span class="n">4</span>膝を伸ばす</h2>
+      <p>膝を、無理のない範囲でのばします。</p>
+    </section>
+    <section class="card pt">
+      <h2><span class="n">5</span>お尻と肩の位置</h2>
+      <p>お尻は、後ろに引けないように。肩は、上がらないように。</p>
+      <div class="fix"><span>お尻が後ろに逃げたり、肩が上がったりしやすい部分です。</span>→ 気づいたら、そっと元の位置に戻します。</div>
+    </section>
+
+    <section class="how">
+      <h2>やり方のコツ</h2>
+      <div class="nums">
+        <div><big>軽く</big>がんばらない</div>
+        <div><big>1日3回</big>毎日続ける</div>
+        <div><big>3秒</big>1回につき</div>
+      </div>
+      <p>ポイントを意識して、3秒ほど立ちます。</p>
+      <p class="key">最後に、ふっと脱力します。</p>
+      <p>軽く、毎日続けることが、いちばんのコツです。</p>
+    </section>
+
+    <div class="goal">
+      <b>まずは、3週間続けてみてください。</b><br>
+      立つ位置が変わり、腰も足も安定してくると思います。
+    </div>
+
+    <a class="rel" href="kihon.html"><span style="font-size:26px">🪑</span><span><b>座位での基本姿勢</b><small>座って行う基本姿勢はこちら</small></span><span class="ar">›</span></a>
+
+    <div class="caution">痛みが強いときや、不安があるときは、無理をせず中止してご相談ください。</div>
+
+    <div class="foot">御薗治療院</div>
+  </div>
+</body>
+</html>
