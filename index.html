@@ -12,6 +12,8 @@
       try { s = decodeURIComponent(raw); } catch (e) {}
       if (!location.hash) {
         if (/go=selfcare/.test(s)) { location.replace('selfcare.html'); return; }
+        if (/go=kenko/.test(s)) { location.replace('kenko.html'); return; }
+        if (/go=hours/.test(s)) { window.__goHours = true; }
         if (/go=wait/.test(s)) { location.hash = '#wait'; }
       }
       if (location.hash === '#wait') { document.documentElement.className = 'start-wait'; }
@@ -593,6 +595,10 @@
     }
 
     routeFromHash();
+    if (window.__goHours) {
+      var hoursEl = document.querySelector('details.item-details');
+      if (hoursEl) { hoursEl.open = true; setTimeout(function(){ hoursEl.scrollIntoView({block:'center'}); }, 100); }
+    }
   </script>
 </body>
 </html>
